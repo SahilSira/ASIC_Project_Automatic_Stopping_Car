@@ -1,4 +1,4 @@
-# ASIC_Project_Automatic_Stopping_Car
+# Automatic_Stopping_Car
 
 This github repository summarizes the progress made in the ASIC class for the riscv_project.
 
