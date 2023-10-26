@@ -423,3 +423,188 @@ lui
 
 
 ```
+
+# Spike Simulation
+
+
+- After this, we define the inputs and outputs using asm to link the assemply level inputs and outputs and store them over variables in C.
+
+- Now, we spike the code to again check the functionality of the code. The test code can be found above as spike_tester.c. We have taken 4 testcases, 3 for the doors to open and one for door remains closed.
+- eg: For m=1 and {p1,p2} = (0,1) the door is opened i.e {d1.d2}=(1,1)
+      For m=1 and {p1,p2} = (1,1) the door is opened i.e {d1.d2}=(1,1)
+      For m=0 and {p1,p2} = (1,0) the door is opened i.e {d1.d2}=(1,1)
+      For m=1 and {p1,p2} = (0,1) the door is opened i.e {d1.d2}=(0,0)
+- The masked output format comes as {d1,d2,p2,p1,m}, in which the 3 bits from LSB are input bits which get masked to 0 for the output, thus the masked output is displayed in the spike simulation comes as {1,1,0,0,0}.
+
+   Masked Output - 24 (000011000) for input {p2,p1,m}=(0,1,0);(1,0,1);(1,1,1);(1,1,0)
+   Masked Output - 00 (000000000) for rest of inputs 
+- **code for spike simulation**
+```bash
+#include <stdio.h>
+#include <stdlib.h>
+int main() 
+  {
+    int Motor1 = 1;
+    int Motor2 = 1;
+    int pulse_counter = 0;
+    int switch_val;
+    int motor1_reg, motor2_reg;
+    int trigger = 0;
+    int echo;
+    int distance;
+    int trigger_reg;
+    int i;
+    int mask1= 0xFFFFFFE3;
+    
+    distance = 21;//sahil
+    for(i=0;i<3;i++)
+    //while (1) 
+     {
+        // Calculate the motor control values
+        motor1_reg = Motor1 * 4;
+        motor2_reg = Motor2 * 8;
+        // Use inline assembly to control motors
+        asm volatile (
+            "and x30, x30, %2\n\t"
+            "or x30, x30, %0\n\t"
+            "or x30, x30, %1\n\t"
+            :
+            : "r"(motor1_reg), "r"(motor2_reg), "r"(mask1)
+            : "x30"
+            );
+        printf("motor1_reg=%d\n",motor1_reg);//sahil
+        printf("motor2_reg=%d\n",motor2_reg);//sahil
+        printf("motor1=%d\n",Motor1);//sahil
+        printf("motor2=%d\n",Motor2);//sahil
+        // Read switch_val
+        asm volatile (
+            "andi %0, x30, 1\n\t"
+            : "=r"(switch_val)
+            );
+        switch_val=1;
+        if (switch_val) 
+          {
+            // Send trigger
+            trigger = 1;
+            trigger_reg = trigger * 16;
+            asm volatile (
+                "or x30, x30, %0\n\t"
+                : "=r"(trigger_reg)
+                );
+            printf("switch_val=%d\n",switch_val);//sahil
+            printf("trigger=%d\n",trigger);//sahil
+
+            printf("trigger_reg=%d\n",trigger_reg);//sahil
+
+            // Delay 10 microseconds
+            for (int i = 0; i < 10; i++);
+
+            trigger = 0;
+            trigger_reg = trigger * 16;
+            asm volatile (
+                "and x30, x30, %1\n\t"
+                "or x30, x30, %0\n\t"
+                :
+                : "r"(trigger_reg), "r"(mask1)
+                :"x30"
+                );
+            printf("trigger_reg=%d\n",trigger_reg);//sahil
+            printf("trigger=%d\n",trigger);//sahil
+
+
+          
+            // Read echo
+          
+            asm volatile (
+                "andi %0, x30, 2\n\t"
+                : "=r"(echo)
+                );
+            echo=1;//sahil
+            printf("echo=%d\n",echo);//sahil
+          
+            
+            while (echo) 
+              {
+                pulse_counter = pulse_counter + 1;
+                echo=0;
+              }
+            
+
+            // Calculate distance
+                //distance = pulse_counter * 172;
+                
+                printf("distance=%d\n",distance);//sahil
+                if (distance <=20 ) 
+                  {
+                    
+                    // Stop motors
+                    Motor1 = 0;
+                    Motor2 = 0;
+                
+                // Calculate the motor control values
+                    motor1_reg = Motor1 * 4;
+                    motor2_reg = Motor2 * 8;
+
+                // Use inline assembly to control motors
+                    asm volatile (
+                        "and x30, x30, %2\n\t"
+                        "or x30, x30, %0\n\t"
+                        "or x30, x30, %1\n\t"
+                        :
+                        : "r"(motor1_reg), "r"(motor2_reg), "r"(mask1)
+                        : "x30"
+                        );
+                    printf("motor1_reg=%d\n",motor1_reg);//sahil
+                    printf("motor2_reg=%d\n",motor2_reg);//sahil
+                    printf("motor1=%d\n",Motor1);//sahil
+                    printf("motor2=%d\n",Motor2);//sahil
+
+
+                    // Delay 200 milliseconds
+                    for (int i = 0; i < 200000; i++);
+                  } 
+                  
+                  else 
+                    {
+                      // Start motors
+                      
+                      Motor1 = 1;
+                      Motor2 = 1;
+
+                      // Calculate the motor control values
+                      motor1_reg = Motor1 * 4;
+                      motor2_reg = Motor2 * 8;
+
+                      
+                      // Use inline assembly to control motors
+                    asm volatile (
+                        "and x30, x30, %2\n\t"
+                        "or x30, x30, %0\n\t"
+                        "or x30, x30, %1\n\t"
+                        :
+                        : "r"(motor1_reg), "r"(motor2_reg), "r"(mask1)
+                        : "x30"
+                        );
+                      printf("motor1_reg=%d\n",motor1_reg);//sahil
+                      printf("motor2_reg=%d\n",motor2_reg);//sahil
+                      printf("motor1=%d\n",Motor1);//sahil
+                      printf("motor2=%d\n",Motor2);//sahil
+          
+                    }
+                  
+              
+        
+        }
+        distance=distance-1;
+    }
+    return 0;
+}
+
+```
+- **spike simulation**
+``` I have used my friend's laptop cause spike wasn't working on mine```
+
+![WhatsApp Image 2023-10-26 at 9 59 30 PM (1)](https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/7438b6a7-c227-4e7a-85fd-1e88c3278fcc)
+![WhatsApp Image 2023-10-26 at 9 59 30 PM](https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/aae9f6a3-0812-412f-8775-b48ed8bd9f08)
+![WhatsApp Image 2023-10-26 at 9 59 29 PM](https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/70b72216-1b0f-4700-819c-076dc5746003)
+
