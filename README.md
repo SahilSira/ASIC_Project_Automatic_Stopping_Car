@@ -509,7 +509,7 @@ int main()
 
 We will perform functional simulation to test the functionality of the verilog code generated for the processor chip. We have tested the processor and its functionality for various input combinations and compare the output generated with the desired expected output. The processor and testbench code are under the file name ```processor.v``` and ```testbench.v```. The files can be found in the repository above.
 
-//Note - The inputs for the processor are ```m, p1, p2```. The inputs are taken from LSB for the x30 registor, thus, the input format is given as {p2,p1,m}. ie, the LSB bit is mapped to m //and continues. Similar;y the output is generated as {av2,av1,x,c}
+
 
 
 - input - 11, expected output -  000/100
