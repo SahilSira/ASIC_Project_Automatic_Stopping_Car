@@ -524,4 +524,3 @@ Note - The inputs for the processor are ```m, p1, p2```. The inputs are taken fr
 - input - 00, expected output - 000
 <img width="575" alt="00" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/d2f898d8-b924-47b9-b369-7ee2f50772cf">
 
-We have seen a few cases and verified the output. We can observe the instruction bit toggling and the input can be seen in the ```input_gpio_pins``` and ```input_write```. We can see the output has been written in the ```output_gpio_pins``` and ```output_write```. We can also observe the ```write_done``` being flagged once the output has been written. Thus we can conclude the processor code is working as expected and we can now move ahead with the synthesis and Gate level simulations.
