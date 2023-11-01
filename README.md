@@ -335,15 +335,6 @@ mv
 
 - After this, we define the inputs and outputs using asm to link the assemply level inputs and outputs and store them over variables in C.
 
-- Now, we spike the code to again check the functionality of the code. The test code can be found above as spike_tester.c. We have taken 4 testcases, 3 for the doors to open and one for door remains closed.
-- eg: For m=1 and {p1,p2} = (0,1) the door is opened i.e {d1.d2}=(1,1)
-      For m=1 and {p1,p2} = (1,1) the door is opened i.e {d1.d2}=(1,1)
-      For m=0 and {p1,p2} = (1,0) the door is opened i.e {d1.d2}=(1,1)
-      For m=1 and {p1,p2} = (0,1) the door is opened i.e {d1.d2}=(0,0)
-- The masked output format comes as {d1,d2,p2,p1,m}, in which the 3 bits from LSB are input bits which get masked to 0 for the output, thus the masked output is displayed in the spike simulation comes as {1,1,0,0,0}.
-
-   Masked Output - 24 (000011000) for input {p2,p1,m}=(0,1,0);(1,0,1);(1,1,1);(1,1,0)
-   Masked Output - 00 (000000000) for rest of inputs 
 - **code for spike simulation**
 ```bash
 #include <stdio.h>
@@ -514,3 +505,23 @@ int main()
 ![WhatsApp Image 2023-10-26 at 9 59 30 PM](https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/aae9f6a3-0812-412f-8775-b48ed8bd9f08)
 ![WhatsApp Image 2023-10-26 at 9 59 29 PM](https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/70b72216-1b0f-4700-819c-076dc5746003)
 
+# Functional Simualation
+
+We will perform functional simulation to test the functionality of the verilog code generated for the processor chip. We have tested the processor and its functionality for various input combinations and compare the output generated with the desired expected output. The processor and testbench code are under the file name ```processor.v``` and ```testbench.v```. The files can be found in the repository above.
+
+Note - The inputs for the processor are ```m, p1, p2```. The inputs are taken from LSB for the x30 registor, thus, the input format is given as {p2,p1,m}. ie, the LSB bit is mapped to m and continues. Similar;y the output is generated as {av2,av1,x,c}
+
+
+- input - 11, expected output -  000
+<img width="707" alt="11" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/81ad77bb-7761-4315-9f7a-be388af050a2">
+
+- input - 10, expected output - 011
+<img width="504" alt="10" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/35152986-2966-47ec-a4d4-0c5a1967bf20">
+
+- input - 01, expected output - 000
+<img width="677" alt="01" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/8d4dd151-b998-45fd-b61f-16cf3b19c1e0">
+
+- input - 00, expected output - 000
+<img width="575" alt="00" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/d2f898d8-b924-47b9-b369-7ee2f50772cf">
+
+We have seen a few cases and verified the output. We can observe the instruction bit toggling and the input can be seen in the ```input_gpio_pins``` and ```input_write```. We can see the output has been written in the ```output_gpio_pins``` and ```output_write```. We can also observe the ```write_done``` being flagged once the output has been written. Thus we can conclude the processor code is working as expected and we can now move ahead with the synthesis and Gate level simulations.
