@@ -512,13 +512,13 @@ We will perform functional simulation to test the functionality of the verilog c
 Note - The inputs for the processor are ```m, p1, p2```. The inputs are taken from LSB for the x30 registor, thus, the input format is given as {p2,p1,m}. ie, the LSB bit is mapped to m and continues. Similar;y the output is generated as {av2,av1,x,c}
 
 
-- input - 11, expected output -  000
+- input - 11, expected output -  000/100
 <img width="707" alt="11" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/81ad77bb-7761-4315-9f7a-be388af050a2">
 
-- input - 10, expected output - 011
+- input - 10, expected output - 011/111
 <img width="504" alt="10" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/35152986-2966-47ec-a4d4-0c5a1967bf20">
 
-- input - 01, expected output - 000
+- input - 01, expected output - 000/100
 <img width="677" alt="01" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/8d4dd151-b998-45fd-b61f-16cf3b19c1e0">
 
 - input - 00, expected output - 000
