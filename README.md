@@ -524,3 +524,40 @@ We will perform functional simulation to test the functionality of the verilog c
 - input - 00, expected output - 000
 <img width="575" alt="00" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/d2f898d8-b924-47b9-b369-7ee2f50772cf">
 
+
+## Gate Level Synthesis
+
+Here we do Synthesis of our processor on yosys using the following commands:
+
+```
+read_liberty -lib sky130_fd_sc_hd__tt_025C_1v80_256.lib 
+read_verilog processor.v 
+synth -top wrapper
+dfflibmap -liberty sky130_fd_sc_hd__tt_025C_1v80_256.lib 
+abc -liberty sky130_fd_sc_hd__tt_025C_1v80_256.lib
+write_verilog <filename.v>
+
+```
+
+The following Command is used to run the synthesized netlist along with primitives.<br />
+
+```
+iverilog -o test testbench.v synth_processor_test.v sky130_sram_1kbyte_1rw1r_32x256_8.v sky130_fd_sc_hd.v primitives.v
+```
+
+The following waveforms are of GLS Simulation obtained using GTKWave and the same output is obtained as Functional Verification.<br />
+
+<img width="673" alt="00" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/6e64895f-23ee-48ef-9121-195e62f7aa56">
+
+<img width="638" alt="01" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/c866ca89-4c14-48d0-8d67-0b839f768668">
+
+<img width="665" alt="10" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/528cefbe-dc72-4682-ae0d-2df14bc4ee55">
+
+<img width="756" alt="11" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/5279a5ca-eab9-4498-b15b-3832b3f132e5">
+
+The following screenshot is of the wrapper module using the following command in yosys
+
+```
+show wrapper
+```
+<img width="565" alt="wrapper" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/c108223f-01d7-4b22-bd4d-0e0fdaef05b8">
