@@ -525,6 +525,44 @@ We will perform functional simulation to test the functionality of the verilog c
 <img width="575" alt="00" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/d2f898d8-b924-47b9-b369-7ee2f50772cf">
 
 
+# Instruction Verification
+
+We will consider the link: ```https://en.wikichip.org/wiki/risc-v/registers``` for refrence and decide the signal pins. Thus, according to the reference given, ```signal43``` is zero register, ```signal45``` is the stack pointer, and ```signal58``` is the a5 register.
+
+Some of the instructions in the above assembly code were tested in GTKWave and was verified.
+
+**addi sp,sp,-48**
+Here we will conside the assembly code line:
+```10054:	fd010113          	addi	sp,sp,-48```
+We can observe default value of sp is FF after that it becomes AF which is -80 in hexadecimal.
+
+Input instruction - 00000000
+
+Output instruction - FB010113
+
+<img width="726" alt="4" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/93212fdb-fed6-4c22-b259-baa786ac40f9">
+
+
+**li	a5,1**
+Here we will conside the assembly code line:
+```10060:	00100793          	li	a5,1```
+
+We can see for the instruction 00100793 $signal$58 output will be 0000001.
+
+<img width="931" alt="5" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/aa56d845-517f-478c-b5de-dd7ae672ed90">
+<img width="700" alt="3" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/6baaf9c3-3f16-460d-b467-c7f029110c2c">
+
+# The below screenshots are of mutiple possible cases of inputs
+
+- We see the input 10 produces the outputf 011 
+<img width="775" alt="1" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/238ff7a5-ee4f-4afd-b97e-7efba637f1fd">
+When the output is 011 the instruction is 001F7793 as shown above.
+
+- We see the input 11 produces the output 000
+<img width="699" alt="2" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/84f6afd9-598d-4f9d-a017-1b168348241f">
+When the output is becoming low the instruction is 00FF6F33 as shown above.
+
+
 ## Gate Level Synthesis
 
 Here we do Synthesis of our processor on yosys using the following commands:
