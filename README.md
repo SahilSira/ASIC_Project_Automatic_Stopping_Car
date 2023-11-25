@@ -628,13 +628,7 @@ Place and Route (PnR) is the core of any ASIC implementation and Openlane flow i
   - Streaming out the final GDSII layout file from the routed def
  
 ## Preparing the Design
-Preparing the design and including the lef files: The commands to prepare the design and overwite in a existing run folder the reports and results along with the command to include the lef files is given below:
-
-```bash
-sed -i's/max_transition   :0.04/max_transition   :0.75'*/*.lib
-```
-
-
+`
 ```bash
 make mount
 %./flow.tcl -interactive
