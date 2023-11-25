@@ -599,3 +599,209 @@ The following screenshot is of the wrapper module using the following command in
 show wrapper
 ```
 <img width="565" alt="wrapper" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/c108223f-01d7-4b22-bd4d-0e0fdaef05b8">
+
+# Physical Design
+
+Place and Route (PnR) is the core of any ASIC implementation and Openlane flow integrates into it several key open source tools which perform each of the respective stages of PnR. Below are the stages and the respective tools that are called by openlane for the functionalities as described:<br />
+
+<img width="408" alt="Screenshot 2023-11-25 215932" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/e1bda3c1-af13-4d4b-b0af-0c0f6b18bb57">
+
+
+
+- Synthesis
+  - Generating gate-level netlist
+  -  Performing cell mapping
+  -   Performing pre-layout STA
+- Floorplaning
+  - Defining the core area for the macro as well as the cell sites and the tracks
+  - Placing the macro input and output ports
+  - Generating the power distribution network
+- Placement
+  - Performing global placemen
+  - Perfroming detailed placement to legalize the globally placed components
+- Clock Tree Synthesis
+  - Synthesizing the clock tree
+- Routing
+  - Performing global routing to generate a guide file for the detailed router
+  - Performing detailed routing
+- GDSII
+  - Streaming out the final GDSII layout file from the routed def
+ 
+## Preparing the Design
+Preparing the design and including the lef files: The commands to prepare the design and overwite in a existing run folder the reports and results along with the command to include the lef files is given below:
+
+```bash
+sed -i's/max_transition   :0.04/max_transition   :0.75'*/*.lib
+```
+
+
+```bash
+make mount
+%./flow.tcl -interactive
+% package require openlane 0.9
+% prep -design project
+% run_synthesis; run_floorplan; run_placement; run_cts; gen_pdn; run_routing
+
+```
+
+<img width="865" alt="1" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/5c62fada-ca90-49a9-867a-9f26071e4f3d">
+
+Completion of routing 
+
+<img width="868" alt="2" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/7768db6b-9d6a-4421-92a4-10f3b6ac5a3f">
+
+Sign off steps 
+
+```bash
+run_magic
+run_magic_spice_export
+run_magic_drc
+run_antenna_check
+```
+
+<img width="864" alt="3" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/8179a033-8e61-44b8-a36f-107ac828ab9c">
+
+
+## Reports 
+
+***SYNTHESIS***
+
+- Logic synthesis uses the RTL netlist to perform HDL technology mapping. The synthesis process is normally performed in two major steps:
+  - GTECH Mapping – Consists of mapping the HDL netlist to generic gates what are used to perform logical optimization based on AIGERs and other topologies created from the generic mapped netlist
+  - Technology Mapping – Consists of mapping the post-optimized GTECH netlist to standard cells described in the PDK.
+
+- To synthesize the code run the following command.
+```bash
+run_synthesis
+```
+
+<img width="920" alt="synth_log" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/4fbba84e-cdfa-4061-853c-0fcd0bdde643">
+
+***FLOORPLAN***
+
+- Goal is to plan the silicon area and create a robust power distribution network (PDN) to power each of the individual components of the synthesized netlist. In addition, macro placement and blockages must be defined before placement occurs to ensure a legalized GDS file. In power planning we create the ring which is connected to the pads which brings power around the edges of the chip. We also include power straps to bring power to the middle of the chip using higher metal layers which reduces IR drop and electro-migration problem.
+
+- Following command helps to run floorplan:
+
+```bash
+run_floorplan
+```
+
+- to view the floorplan on Magic from ```results/floorplan```
+
+```bash
+ magic -T ~/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.nom.lef def read wrapper.def &
+```
+<img width="950" alt="floorplan" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/eef4f868-9549-4119-be27-2bc6f371726c">
+
+- Core Area after floorplan
+
+<img width="710" alt="core_area" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/1e0602e5-cae7-4f23-a028-85ace33e6d76">
+
+- Die Area after floorplan
+
+<img width="802" alt="die_area" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/1130bbd1-5bdc-4957-9e84-6e40aee08dca">
+
+
+***PLACEMENT***
+
+- Place the standard cells on the floorplane rows, aligned with sites defined in the technology lef file. Placement is done in two steps: Global and Detailed. In Global placement tries to find optimal position for all cells but they may be overlapping and not aligned to rows, detailed placement takes the global placement and legalizes all of the placements trying to adhere to what the global placement wants. The next step in the OpenLANE ASIC flow is placement. The synthesized netlist is to be placed on the floorplan. Placement is perfomed in 2 stages:
+  - Global Placement
+  - Detailed Placement
+
+- Run the following command to run the placement:
+
+```bash
+run_placement
+```
+
+- to view the placement on Magic from ```results/placement```
+
+```bash
+ magic -T ~/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.nom.lef def read wrapper.def &
+```
+
+<img width="998" alt="placement" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/db9f2cbc-a90a-4f27-a58c-44ccb081850f">
+
+
+
+***CLOCK TREE SYNTHESIS***
+
+Clock tree synteshsis is used to create the clock distribution network that is used to deliver the clock to all sequential elements. The main goal is to create a network with minimal skew across the chip. H-trees are a common network topology that is used to achieve this goal.
+
+The purpose of building a clock tree is enable the clock input to reach every element and to ensure a zero clock skew. H-tree is a common methodology followed in CTS.
+Following command is used to run CTS.
+
+```bash
+run_cts
+```
+
+- Timimg Report
+
+<img width="650" alt="timing" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/b0c2cd41-1800-4a1b-b466-87ced7686486">
+
+- Area Report
+
+<img width="628" alt="area" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/28308c61-43de-4928-b60f-14e2e5ea87a7">
+
+- Skew Report
+
+<img width="584" alt="skew" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/309e1003-558d-48de-b606-a73c58fb10bf">
+
+- Power Report
+
+<img width="606" alt="power" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/51257a42-e07a-4ca4-a34c-59eadf062a63">
+
+
+***POWER NETWORK DISTRIBUTION***
+
+- The commmand to establish power distribution network is as follows
+
+```bash
+gen_pdn
+```
+
+***ROUTING***
+
+- Implements the interconnect system between standard cells using the remaining available metal layers after CTS and PDN generation. The routing is performed on routing grids to ensure minimal DRC errors.
+- OpenLANE uses the TritonRoute tool for routing. There are 2 stages of routing:
+  - Global Routing
+  - Detailed Routing
+
+- In Global Routing Routing region is divided into rectangle grids which are represented as course 3D routes (Fastroute tool).
+- In Detailed Finer grids and routing guides used to implement physical wiring (TritonRoute tool).
+
+- Run the following command to run the routing
+
+```bash
+run_routing
+```
+- The layout can be viewed using MAGIC in ```results/routing```
+
+```bash
+ magic -T ~/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.nom.lef def read wrapper.def &
+```
+
+<img width="965" alt="routing" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/8dea85e1-4f21-4fa3-aab9-7427b8dad7e3">
+
+- Area of Design
+
+<img width="614" alt="magic" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/bfcfebfd-3ae5-4b24-87df-e4570395cb30">
+
+- Post Routing Reports
+  
+  -  Timing
+
+<img width="694" alt="rout_timing" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/9a597efe-cb42-4ca0-8c76-e49295f1dd74">
+
+  -  Area
+ 
+<img width="655" alt="rout_area" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/6e5dff8e-211e-4127-802d-36a009b0ae1c">
+ 
+  -  Power
+
+<img width="685" alt="rout_power" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/04642826-d1e5-4c91-9842-80f59df248dd">
+ 
+  -  Design Rule Check (DRC)
+
+<img width="691" alt="DRC" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/b48e2ca7-ecfb-4007-8eb1-c7bf76c5706b">
