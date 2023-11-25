@@ -721,7 +721,7 @@ run_placement
  magic -T ~/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.nom.lef def read wrapper.def &
 ```
 
-<img width="998" alt="placement" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/db9f2cbc-a90a-4f27-a58c-44ccb081850f">
+<img width="954" alt="placement" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/c74e3b1b-8cc1-4941-aac7-383b091848e5">
 
 
 
