@@ -799,3 +799,18 @@ run_routing
   -  Design Rule Check (DRC)
 
 <img width="691" alt="DRC" src="https://github.com/SahilSira/ASIC_Project_Automatic_Stopping_Car/assets/140998855/b48e2ca7-ecfb-4007-8eb1-c7bf76c5706b">
+
+# Word of Thanks
+
+I would take this opportunity to sciencerly thank Mr. Kunal Gosh(Founder/VSD) for helping me out to complete this flow smoothly.
+
+Acknowledgement
+
+- Kunal Ghosh, VSD Corp. Pvt. Ltd.
+- Skywater Foundry
+- OpenAI Chatgpt
+- Shant Rakshit, MTech, IIITB
+- Emil Jayanth Lal, MTech, IIITB
+- Mayank Kabra, Founder, Chipcron Pvt.Ltd.
+- Tushar Mavi, MTech, IIITB
+- Kanish R, MTech, IIITB
